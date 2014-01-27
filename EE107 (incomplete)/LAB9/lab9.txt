@@ -1,0 +1,62 @@
+int inputA = 2;
+int inputB = 3;
+int output1 = 4;
+int output2 = 5;
+int output3 = 6;
+int output4 = 7;
+int i, gate, result;
+char serialinput[4];
+int in_arr[4][2] = {
+  {0,0}
+  {0,1}
+  {1,0}
+  {1,1}
+};
+int test_arr[4][5] = {
+  {0,0,0,1,1}
+  {0,1,1,1,0}
+  {0,1,1,1,0}
+  {0,0,0,1,1}
+  {1,1,0,0,0}
+};
+int out_arr[4][5];
+
+
+void setup() {
+  // initialize serial communication:
+  Serial.begin(9600); 
+   // initialize the pins:
+        pinMode(inputA, OUTPUT);
+        pinMode(inputB, OUTPUT);
+        pinMode(output1, INPUT);
+        pinMode(output2, INPUT);
+        pinMode(output3, INPUT);
+        pinMode(output4, INPUT);
+
+void loop() {
+  out_arr = test_arr;
+  // read the sensor:
+  while (Serial.available() != 1);
+  for(i=0; Serial.available() > 0; ++1){
+    if (i<4) serialinput[i] = Serial.read();
+  }
+
+  if ((serialinput[0]='a')||(serialinput[0]='A')) gate = 0; //AND
+  if ((serialinput[0]='o')||(serialinput[0]='O')) gate = 1; //OR
+  if ((serialinput[0]='x')||(serialinput[0]='X')) gate = 2; //XOR
+  if ((serialinput[0]='n')||(serialinput[0]='N')){
+      if ((serialinput[1]='a')||(serialinput[1]='A')) gate = 3; //NAND
+      else gate = 4; //NOR
+  }
+
+  result = 1;
+  for(int i=0,i<4,i++)
+    digitalWrite(inputA,in_arr[0][i]);
+    digitalWrite(inputB,in_arr[1][i]);
+    delay(50);
+    out_arr[i][gate] = digitalRead(output1);
+
+    if(array[gate][i] != val)
+        result = '0'
+}
+

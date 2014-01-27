@@ -1,0 +1,36 @@
+#include <stdio.h>
+
+void PowersOfTen (int n)
+{
+	double i=1,p=1;
+	while(i<=n)
+		{
+		 p=p*10;
+		 i++;
+		}
+		
+	printf ("10 to the power of %2i is:%25.0f.\n",n,p);
+
+	return;
+}
+
+
+int main (void)
+{
+int x=1;
+ while (x==1)
+  {
+	int j=1,i;
+	printf ("Enter a number between 0 and 22. ");
+	scanf ("%i",&i);
+	while(j<=i)
+		{
+		 PowersOfTen (j);
+	 	 j++;
+		}
+	printf ("Enter 1 to continue. ");
+	scanf ("%i",&x);
+  }
+	return 0;
+}
+

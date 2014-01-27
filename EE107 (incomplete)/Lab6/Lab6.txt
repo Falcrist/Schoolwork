@@ -1,0 +1,35 @@
+int in = 0;   // input from incoming serial data
+int op = 0;   // operation
+int tot = 0;  // running total
+
+void setup()
+{
+	Serial.begin(9600);     // opens serial port, sets data rate to 9600 bps
+}
+
+void loop() {
+
+        // send data only when you receive data:
+        while (!Serial.available());
+
+         // read the incoming byte:
+        in = Serial.read();
+
+        while (in != '$'){
+              if (in == '+') op='+';
+              if (in == '-') op='-';
+              if (('9' >= in) && (in >= '0'))
+                  {
+                   if (op == '-') tot -= (in-'0');
+                   else tot += (in-'0');
+                  }
+              in = Serial.read();
+             }
+                // print the total:
+                Serial.print("The result is: ");
+                Serial.println(tot, DEC);
+
+		// reset variables
+                tot = 0;
+		op = 0;
+        }
