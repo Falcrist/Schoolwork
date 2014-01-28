@@ -11,13 +11,8 @@ void parseString(string s);
 
 int main(int argc, char *argv[])
 {
-<<<<<<< HEAD
-    if ( parseArgs(argc-1, argv) )
-        parseUser( getUserInput() );
-=======
     if ( parseArgs(argc-1, argv) )  // if the loop runs, it will execute usercontinue();
         parseUser( getUserInput("\nEnter a string: ") );
->>>>>>> added stringevaluator.cpp to cs111
 
     return 0;
 }
