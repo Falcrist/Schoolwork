@@ -2,9 +2,9 @@
 #include <cstdlib> // used for atof()
 using namespace std;
 
-string getUserInput(string prompt);
+string getUserInput(string prompt = "\nEnter a string: ");
 bool isFloatString(string s);
-bool userContinue(string prompt);
+bool userContinue(string prompt = "Continue? (Y/N)");
 bool parseArgs(int argc, char *argv[]);
 void parseUser(string s);
 void parseString(string s);
@@ -12,7 +12,7 @@ void parseString(string s);
 int main(int argc, char *argv[])
 {
     if ( parseArgs(argc-1, argv) )
-        parseUser( getUserInput("\nEnter a string: ") );
+        parseUser( getUserInput() );
 
     return 0;
 }
@@ -26,16 +26,16 @@ bool parseArgs(int argc, char *argv[])
 
     if (argc > 1)
         return parseArgs(argc-1, argv);
-    else                                        // On last occurance, take user input,
-        return userContinue("Continue? (Y/N)"); // and use it as the overall output.
+    else                       // On last occurance, take user input,
+        return userContinue(); // and use it as the overall output.
 }
 
 void parseUser(string s)
 {
     parseString(s);
 
-    if (userContinue("Continue? (Y/N)"))
-        parseUser(getUserInput("\nEnter a string: "));
+    if (userContinue())
+        parseUser(getUserInput());
 
     return;
 }
