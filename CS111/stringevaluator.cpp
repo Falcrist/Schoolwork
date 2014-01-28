@@ -4,27 +4,24 @@ using namespace std;
 
 string getUserInput(string prompt = "\nEnter a string: ");
 bool isFloatString(string s);
+bool isHexString(string s);
 bool userContinue(string prompt = "Continue? (Y/N)");
 bool parseArgs(int argc, char *argv[]);
 void parseUser(string s);
 void parseString(string s);
+int atoh(string s);
 
 int main(int argc, char *argv[])
 {
-<<<<<<< HEAD
     if ( parseArgs(argc-1, argv) )
         parseUser( getUserInput() );
-=======
-    if ( parseArgs(argc-1, argv) )  // if the loop runs, it will execute usercontinue();
-        parseUser( getUserInput("\nEnter a string: ") );
->>>>>>> added stringevaluator.cpp to cs111
 
     return 0;
 }
 
 bool parseArgs(int argc, char *argv[])
 {
-    if (argc == 0)                  // Do not run loop if only 1 arg.
+    if (argc == 0)      // Do not run loop if only 1 arg.
         return true;
 
     parseString(argv[argc]);
@@ -49,8 +46,10 @@ void parseString(string s)
 {
     if (isFloatString(s))
         cout << '"' << s << "\" is a float string with value: " << atof(s.c_str()) << endl;
+    else if (isHexString(s))
+        cout << '"' << s << "\" is a HEX string with value: " << atoh(s) << endl;
     else
-        cout << '"' << s << "\" is NOT a float string." << endl;
+        cout << '"' << s << "\" is NOT a float/hex string." << endl;
     return;
 }
 
@@ -73,6 +72,38 @@ string getUserInput(string prompt)
     cout << prompt;
     getline(cin,t);
     return t;
+}
+
+bool isHexString(string s)
+{
+    int state = 0;
+    for (unsigned int i =0; i < s.length(); ++i) {
+        switch (state) {
+            case 0: if (s[i] == '0')
+                        state = 1;
+                    else
+                        return false;
+                    break;
+            case 1: if (s[i] == 'x' || s[i] == 'X')
+                        state = 2;
+                    else
+                        return false;
+                    break;
+            case 2: if (isxdigit(s[i]))
+                        state = 3;
+                    else
+                        return false;
+                    break;
+            case 3: if (isxdigit(s[i]))
+                        break;
+                    else
+                        return false;
+        }
+    }
+    if (state == 3)
+        return true;
+    else
+        return false;
 }
 
 bool isFloatString(string s)
@@ -149,3 +180,34 @@ bool isFloatString(string s)
     else
         return false;
 }
+
+int atoh(string s)
+{
+    unsigned int multi = 1;
+    int total = 0;
+    for (unsigned int i = s.length(); --i > 1; multi<<=4) {
+        if (isdigit(s[i]))
+            total += multi * (s[i] - '0');
+        else if (s[i] >= 'a' && s[i] <= 'f')
+            total += multi * (s[i] - 'a' + 10);
+        else if (s[i] >= 'A' && s[i] <= 'F')
+            total += multi * (s[i] - 'A' + 10);
+    }
+    return total;
+}
+
+/* Ugly POS recursive version:
+
+int atoh(string s, int i)
+{
+    if (--i > 1) {
+        if (isdigit(s[i]))
+            return (1<<((s.length()-(i+1))*4)) * (s[i] - '0') + atoh(s,i);
+        else if (s[i] >= 'a' && s[i] <= 'f')
+            return (1<<((s.length()-(i+1))*4)) * (s[i] - 'a' + 10) + atoh(s,i);
+        else if (s[i] >= 'A' && s[i] <= 'F')
+            return (1<<((s.length()-(i+1))*4)) * (s[i] - 'A' + 10) + atoh(s,i);
+    }
+    return 0;
+
+} */
