@@ -5,6 +5,7 @@ using namespace std;
 string getUserInput(string prompt = "\nEnter a string: ");
 bool isFloatString(string s);
 bool isHexString(string s);
+bool isDateString(string s);
 bool userContinue(string prompt = "Continue? (Y/N)");
 bool parseArgs(int argc, char *argv[]);
 void parseUser(string s);
@@ -48,8 +49,10 @@ void parseString(string s)
         cout << '"' << s << "\" is a float string with value: " << atof(s.c_str()) << endl;
     else if (isHexString(s))
         cout << '"' << s << "\" is a HEX string with value: " << atoh(s) << endl;
+    else if (isDateString(s))
+        cout << '"' << s << "\" is a date string." << endl;
     else
-        cout << '"' << s << "\" is NOT a float/hex string." << endl;
+        cout << '"' << s << "\" is NOT a float, hex, or date string." << endl;
     return;
 }
 
@@ -181,6 +184,124 @@ bool isFloatString(string s)
         return false;
 }
 
+bool isDateString(string s)
+{
+    int state = 0;
+    for(unsigned int i = 0; i < s.length(); ++i) {
+        switch (state) {
+            case 0: if (isdigit(s[i]))
+                        state = 1;
+                    else
+                        return false;
+                    break;
+            case 1: if (isdigit(s[i]))
+                        state = 2;
+                    else
+                        return false;
+                    break;
+            case 2: if (isdigit(s[i]))
+                        state = 3;
+                    else
+                        return false;
+                    break;
+            case 3: if (isdigit(s[i]))
+                        state = 4;
+                    else
+                        return false;
+                    break;
+            case 4: if (isdigit(s[i]))
+                        state = 5;
+                    else if (s[i] == 'W')
+                        state = 9;
+                    else if (s[i] == '-')
+                        state = 12;
+                    else
+                        return false;
+                    break;
+            case 5: if (isdigit(s[i]))
+                        state = 6;
+                    else
+                        return false;
+                    break;
+            case 6: if (isdigit(s[i]))
+                        state = 7;
+                    else
+                        return false;
+                    break;
+            case 7: if (isdigit(s[i]))
+                        state = 8;
+                    else
+                        return false;
+                    break;
+            case 8: return false;
+            case 9: if (isdigit(s[i]))
+                        state = 10;
+                    else
+                        return false;
+                    break;
+            case 10: if (isdigit(s[i]))
+                        state = 11;
+                    else
+                        return false;
+                    break;
+            case 11: return false;
+            case 12: if (isdigit(s[i]))
+                        state = 13;
+                    else
+                        return false;
+                    break;
+            case 13: if (isdigit(s[i]))
+                        state = 14;
+                    else
+                        return false;
+                    break;
+            case 14: if (s[i] == '-')
+                        state = 15;
+                    else
+                        return false;
+                    break;
+            case 15: if (isdigit(s[i]))
+                        state = 16;
+                    else
+                        return false;
+                    break;
+            case 16: if (isdigit(s[i]))
+                        state = 17;
+                    else
+                        return false;
+                    break;
+            case 17: return false;
+            case 18: if (isdigit(s[i]))
+                        state = 19;
+                    else
+                        return false;
+                    break;
+            case 19: if (isdigit(s[i]))
+                        state = 20;
+                    else
+                        return false;
+                    break;
+            case 20: if (s[i] == '-')
+                        state = 21;
+                    else
+                        return false;
+                    break;
+            case 21: if (isdigit(s[i]))
+                        state = 22;
+                    else
+                        return false;
+                    break;
+            case 22: return false;
+        }
+    }
+    if (state == 2  || state == 4  || state == 6  || state == 7 ||
+        state == 8  || state == 11 || state == 14 ||
+        state == 17 || state == 20 || state == 22)
+        return true;
+    else
+        return false;
+}
+
 int atoh(string s)
 {
     unsigned int multi = 1;
@@ -195,6 +316,7 @@ int atoh(string s)
     }
     return total;
 }
+
 
 /* Ugly POS recursive version:
 
