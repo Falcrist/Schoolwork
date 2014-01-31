@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
 
 bool parseArgs(int argc, char *argv[])
 {
-    if (argc == 0)      // Do not run loop if only 1 arg.
+    if (argc == 0)            // Do not run loop if only 1 arg.
         return true;
 
     parseString(argv[argc]);
@@ -244,7 +244,11 @@ bool isDateString(string s)
                     else
                         return false;
                     break;
-            case 11: return false;
+            case 11: if (isdigit(s[i]))
+                        state = 24;
+                    else
+                        return false;
+                    break;
             case 12: if (isdigit(s[i]))
                         state = 13;
                     else
@@ -257,6 +261,8 @@ bool isDateString(string s)
                     break;
             case 14: if (s[i] == '-')
                         state = 15;
+                    else if (isdigit(s[i]))
+                        state = 23;
                     else
                         return false;
                     break;
@@ -292,17 +298,20 @@ bool isDateString(string s)
                         return false;
                     break;
             case 22: return false;
+            case 23: return false;
+            case 24: return false;
         }
     }
-    if (state == 2  || state == 4  || state == 6  || state == 7 ||
-        state == 8  || state == 11 || state == 14 ||
-        state == 17 || state == 20 || state == 22)
+    if (state == 2  || state == 4  || state == 6  || state == 7  ||
+        state == 8  || state == 11 || state == 14 || state == 17 ||
+        state == 20 || state == 22 || state == 23 || state == 24)
         return true;
     else
         return false;
 }
 
 int atoh(string s)
+// converts a valid ascii hex string into an integer.
 {
     unsigned int multi = 1;
     int total = 0;
@@ -318,7 +327,7 @@ int atoh(string s)
 }
 
 
-/* Ugly POS recursive version:
+/* Ugly, POS, recursive version:
 
 int atoh(string s, int i)
 {
