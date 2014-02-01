@@ -199,12 +199,13 @@ bool isFloatString(string s)
                     break;
             // recieved >= one digit of exponent:
             case 7: if (isdigit(s[i]))
-                        break;
+                        state = 7;
                     else
                         return false;
+                    break;
         }
     }
-    if (state == 5 || state == 8)
+    if (state == 4 || state == 7)
         return true;
     else
         return false;
