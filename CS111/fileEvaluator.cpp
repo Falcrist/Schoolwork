@@ -1,9 +1,20 @@
+/* Talen Phillips
+ * CS111-01
+ * 31JAN2013
+ * "File Evaluator"
+ *
+ * This program prompts the user to open a file, then evaluates each string
+ * within that file to determine if it is a valid floating point number,
+ * hexidecimal number, or date format.
+ */
+
 #include <iostream>
 #include <fstream>
-#include <cstdlib> // used for atof()
+#include <cstdlib> // used for atof() and strtol()
 using namespace std;
 
-string getUserInput(string prompt = "\nEnter a string: ");
+// using prototyping and default arguments
+string getUserInput(string prompt = "Enter a file name (with path): ");
 bool isFloatString(string s);
 bool isHexString(string s);
 bool isDateString(string s);
@@ -15,50 +26,55 @@ void parseString(string s);
 
 int main(int argc, char *argv[])
 {
-    if ( parseArgs(argc-1, argv) )
+    if ( parseArgs(argc-1, argv) ) // returns userContinue() if it runs
         parseUser( getUserInput() );
 
     return 0;
 }
 
 bool parseArgs(int argc, char *argv[])
+// evaluates each additional argument starting with the final one
 {
-    if (argc == 0)            // Do not run loop if only 1 arg.
+    if (argc == 0)              // Do not run loop if only 1 arg.
         return true;
 
     parseFile(argv[argc]);
 
     if (argc > 1)
         return parseArgs(argc-1, argv);
-    else                       // On last occurance, take user input,
-        return userContinue(); // and use it as the overall output.
+    else                        // On last occurance, take user input,
+        return userContinue();  // and use it as the overall output.
 }
 
 void parseUser(string s)
+// recursive control loop
 {
     parseFile(s);
 
     if (userContinue())
-        parseUser(getUserInput());
+        parseUser( getUserInput() );
 
     return;
 }
 
 void parseFile(string s)
+// opens file who's name is passed in through argument, and evaluates each string
 {
     ifstream myfile;
-    myfile.open(s.c_str());
-    if (myfile.is_open()) {
+    myfile.open( s.c_str() );
+    if ( myfile.is_open() ) {
         while (myfile >> s)
             parseString(s);
         myfile.close();
+        cout << endl;
     }
     else
-        cout << "Error! File not found." << endl;
+        cout << "Error! File not found.\nCheck file name and path, and try again." << endl;
     return;
 }
 
 void parseString(string s)
+// checks each string to see if it's a float, hex, or date
 {
     if (isFloatString(s))
         cout << '"' << s << "\" is a float string with value: " << atof(s.c_str()) << endl;
@@ -70,6 +86,7 @@ void parseString(string s)
 }
 
 bool userContinue(string prompt)
+// prompts user to continue or not. recurs on invalid input.
 {
     string cont = "";
     cout << '\n' << prompt << ' ';
@@ -83,6 +100,7 @@ bool userContinue(string prompt)
 }
 
 string getUserInput(string prompt)
+// prompts user to enter a string
 {
     string t = "";
     cout << prompt;
@@ -96,22 +114,22 @@ bool isHexString(string s)
     int state = 0;
     for (unsigned int i =0; i < s.length(); ++i) {
         switch (state) {
-            case 0: if (s[i] == '0')
+            case 0: if (s[i] == '0')                //begin
                         state = 1;
                     else
                         return false;
                     break;
-            case 1: if (s[i] == 'x' || s[i] == 'X')
+            case 1: if (s[i] == 'x' || s[i] == 'X') //received '0'
                         state = 2;
                     else
                         return false;
                     break;
-            case 2: if (isxdigit(s[i]))
+            case 2: if (isxdigit(s[i]))             //received x
                         state = 3;
                     else
                         return false;
                     break;
-            case 3: if (isxdigit(s[i]))
+            case 3: if (isxdigit(s[i]))             //received >= one digit
                         break;
                     else
                         return false;
