@@ -10,7 +10,6 @@ bool userContinue(string prompt = "Continue? (Y/N)");
 bool parseArgs(int argc, char *argv[]);
 void parseUser(string s);
 void parseString(string s);
-int atoh(string s);
 
 int main(int argc, char *argv[])
 {
@@ -48,7 +47,7 @@ void parseString(string s)
     if (isFloatString(s))
         cout << '"' << s << "\" is a float string with value: " << atof(s.c_str()) << endl;
     else if (isHexString(s))
-        cout << '"' << s << "\" is a HEX string with value: " << atoh(s) << endl;
+        cout << '"' << s << "\" is a HEX string with value: " << strtol(s.c_str(), '\0', 0) << endl;
     else if (isDateString(s))
         cout << '"' << s << "\" is a date string." << endl;
     else
@@ -78,6 +77,7 @@ string getUserInput(string prompt)
 }
 
 bool isHexString(string s)
+// Determines if a string is a properly formatted hex number: 0x###...
 {
     int state = 0;
     for (unsigned int i =0; i < s.length(); ++i) {
@@ -110,12 +110,11 @@ bool isHexString(string s)
 }
 
 bool isFloatString(string s)
+// determines if string is valid input for atof()
 {
-    // determines if string is valid input for atof()
     int state = 1;
     for(unsigned int i = 0; i < s.length(); ++i) {
         switch (state) {
-            // beginning state:
             case 1: if (s[i] == '+' || s[i] == '-')
                         state = 2;
                     else if (isdigit(s[i]))
@@ -185,160 +184,130 @@ bool isFloatString(string s)
 }
 
 bool isDateString(string s)
+// Determines if a string is a properly formatted date.
 {
     int state = 0;
     for(unsigned int i = 0; i < s.length(); ++i) {
         switch (state) {
-            case 0: if (isdigit(s[i]))
+            case 0: if (isdigit(s[i]))      //begin
                         state = 1;
                     else
                         return false;
                     break;
-            case 1: if (isdigit(s[i]))
+            case 1: if (isdigit(s[i]))      //received Y
                         state = 2;
                     else
                         return false;
                     break;
-            case 2: if (isdigit(s[i]))
+            case 2: if (isdigit(s[i]))      //received YY
                         state = 3;
                     else
                         return false;
                     break;
-            case 3: if (isdigit(s[i]))
+            case 3: if (isdigit(s[i]))      //received YYY
                         state = 4;
                     else
                         return false;
                     break;
-            case 4: if (isdigit(s[i]))
+            case 4: if (isdigit(s[i]))      //received YYYY
                         state = 5;
                     else if (s[i] == 'W')
                         state = 9;
                     else if (s[i] == '-')
-                        state = 12;
-                    else
-                        return false;
-                    break;
-            case 5: if (isdigit(s[i]))
-                        state = 6;
-                    else
-                        return false;
-                    break;
-            case 6: if (isdigit(s[i]))
-                        state = 7;
-                    else
-                        return false;
-                    break;
-            case 7: if (isdigit(s[i]))
-                        state = 8;
-                    else
-                        return false;
-                    break;
-            case 8: return false;
-            case 9: if (isdigit(s[i]))
-                        state = 10;
-                    else
-                        return false;
-                    break;
-            case 10: if (isdigit(s[i]))
-                        state = 11;
-                    else
-                        return false;
-                    break;
-            case 11: if (isdigit(s[i]))
-                        state = 24;
-                    else
-                        return false;
-                    break;
-            case 12: if (isdigit(s[i]))
                         state = 13;
                     else
                         return false;
                     break;
-            case 13: if (isdigit(s[i]))
+            case 5: if (isdigit(s[i]))      //received YYYY#
+                        state = 6;
+                    else
+                        return false;
+                    break;
+            case 6: if (isdigit(s[i]))      //received YYYY##
+                        state = 7;
+                    else
+                        return false;
+                    break;
+            case 7: if (isdigit(s[i]))      //received YYYY###
+                        state = 8;
+                    else
+                        return false;
+                    break;
+            case 8: return false;           //received YYYYMMDD
+            case 9: if (isdigit(s[i]))      //received YYYYW
+                        state = 10;
+                    else
+                        return false;
+                    break;
+            case 10: if (isdigit(s[i]))     //received YYYYWw
+                        state = 11;
+                    else
+                        return false;
+                    break;
+            case 11: if (isdigit(s[i]))     //received YYYYWww
+                        state = 12;
+                    else
+                        return false;
+                    break;
+            case 12: return false;          //received YYYYWwwd
+            case 13: if (isdigit(s[i]))     //received YYYY-
                         state = 14;
-                    else
-                        return false;
-                    break;
-            case 14: if (s[i] == '-')
-                        state = 15;
-                    else if (isdigit(s[i]))
-                        state = 23;
-                    else
-                        return false;
-                    break;
-            case 15: if (isdigit(s[i]))
-                        state = 16;
-                    else
-                        return false;
-                    break;
-            case 16: if (isdigit(s[i]))
-                        state = 17;
-                    else
-                        return false;
-                    break;
-            case 17: return false;
-            case 18: if (isdigit(s[i]))
-                        state = 19;
-                    else
-                        return false;
-                    break;
-            case 19: if (isdigit(s[i]))
+                    else if (s[i] == 'W')
                         state = 20;
                     else
                         return false;
                     break;
-            case 20: if (s[i] == '-')
+            case 14: if (isdigit(s[i]))     //received YYYY-#
+                        state = 15;
+                    else
+                        return false;
+                    break;
+            case 15: if (s[i] == '-')       //received YYYY-##
+                        state = 16;
+                    else if (isdigit(s[i]))
+                        state = 19;
+                    else
+                        return false;
+                    break;
+            case 16: if (isdigit(s[i]))     //received YYYY-MM-
+                        state = 17;
+                    else
+                        return false;
+                    break;
+            case 17: if (isdigit(s[i]))     //received YYYY-MM-D
+                        state = 18;
+                    else
+                        return false;
+                    break;
+            case 18: return false;          //received YYYY-MM-DD
+            case 19: return false;          //received YYYY-DDD
+            case 20: if (isdigit(s[i]))     //received YYYY-W
                         state = 21;
                     else
                         return false;
                     break;
-            case 21: if (isdigit(s[i]))
+            case 21: if (isdigit(s[i]))     //received YYYY-Ww
                         state = 22;
                     else
                         return false;
                     break;
-            case 22: return false;
-            case 23: return false;
-            case 24: return false;
+            case 22: if (s[i] == '-')       //received YYYY-Www
+                        state = 23;
+                    else
+                        return false;
+                    break;
+            case 23: if (isdigit(s[i]))     //received YYYY-Www-
+                        state = 24;
+                    else
+                        return false;
+                    break;
+            case 24: return false;          //received YYYY-Www-d
         }
     }
-    if (state == 2  || state == 4  || state == 6  || state == 7  ||
-        state == 8  || state == 11 || state == 14 || state == 17 ||
-        state == 20 || state == 22 || state == 23 || state == 24)
+    if ( state == 2  || state == 4  || state == 6  || state == 7  ||
+         state == 8  || state == 11 || state == 12 || state == 15 ||
+         state == 18 || state == 19 || state == 22 || state == 24 )
         return true;
     else
         return false;
 }
-
-int atoh(string s)
-// converts a valid ascii hex string into an integer.
-{
-    unsigned int multi = 1;
-    int total = 0;
-    for (unsigned int i = s.length(); --i > 1; multi<<=4) {
-        if (isdigit(s[i]))
-            total += multi * (s[i] - '0');
-        else if (s[i] >= 'a' && s[i] <= 'f')
-            total += multi * (s[i] - 'a' + 10);
-        else if (s[i] >= 'A' && s[i] <= 'F')
-            total += multi * (s[i] - 'A' + 10);
-    }
-    return total;
-}
-
-
-/* Ugly, POS, recursive version:
-
-int atoh(string s, int i)
-{
-    if (--i > 1) {
-        if (isdigit(s[i]))
-            return (1<<((s.length()-(i+1))*4)) * (s[i] - '0') + atoh(s,i);
-        else if (s[i] >= 'a' && s[i] <= 'f')
-            return (1<<((s.length()-(i+1))*4)) * (s[i] - 'a' + 10) + atoh(s,i);
-        else if (s[i] >= 'A' && s[i] <= 'F')
-            return (1<<((s.length()-(i+1))*4)) * (s[i] - 'A' + 10) + atoh(s,i);
-    }
-    return 0;
-
-} */
