@@ -28,7 +28,6 @@ int main(int argc, char *argv[])
 {
     if ( parseArgs(argc-1, argv) ) // returns userContinue() if it runs
         parseUser( getUserInput() );
-
     return 0;
 }
 
@@ -37,9 +36,7 @@ bool parseArgs(int argc, char *argv[])
 {
     if (argc == 0)              // Do not run loop if only 1 arg.
         return true;
-
     parseFile(argv[argc]);
-
     if (argc > 1)
         return parseArgs(argc-1, argv);
     else                        // On last occurance, take user input,
@@ -50,10 +47,8 @@ void parseUser(string s)
 // recursive control loop
 {
     parseFile(s);
-
     if (userContinue())
         parseUser( getUserInput() );
-
     return;
 }
 
@@ -144,66 +139,66 @@ bool isHexString(string s)
 bool isFloatString(string s)
 // determines if string is valid input for atof()
 {
-    int state = 1;
+    int state = 0;
     for(unsigned int i = 0; i < s.length(); ++i) {
         switch (state) {
-            case 1: if (s[i] == '+' || s[i] == '-')
-                        state = 2;
+            case 0: if (s[i] == '+' || s[i] == '-')
+                        state = 1;
                     else if (isdigit(s[i]))
-                        state = 3;
+                        state = 2;
                     else if (s[i] == '.')
-                        state = 4;
+                        state = 3;
                     else
                         return false;
                     break;
             // recieved sign:
-            case 2: if (isdigit(s[i]))
-                        state = 3;
+            case 1: if (isdigit(s[i]))
+                        state = 2;
                     else if (s[i] == '.')
-                        state = 4;
+                        state = 3;
                     else
                         return false;
                     break;
             // recieved >= one digit of coefficient:
-            case 3: if (isdigit(s[i]))
-                        state = 3;
+            case 2: if (isdigit(s[i]))
+                        state = 2;
                     else if (s[i] == '.')
-                        state = 4;
+                        state = 3;
                     else if (s[i] == 'e' || s[i] == 'E')
-                        state = 6;
+                        state = 5;
                     else
                         return false;
                     break;
             // recieved a decimal:
-            case 4: if (isdigit(s[i]))
-                        state = 5;
+            case 3: if (isdigit(s[i]))
+                        state = 4;
                     else
                         return false;
                     break;
             // recieved post decimal digits:
-            case 5: if (isdigit(s[i]))
-                        state = 5;
+            case 4: if (isdigit(s[i]))
+                        state = 4;
                     else if (s[i] == 'e' || s[i] == 'E')
-                        state = 6;
+                        state = 5;
                     else
                         return false;
                     break;
             // recieved E or e after valid coefficient:
-            case 6: if (s[i] == '+' || s[i] == '-')
-                        state = 7;
+            case 5: if (s[i] == '+' || s[i] == '-')
+                        state = 6;
                     else if (isdigit(s[i]))
-                        state = 8;
+                        state = 7;
                     else
                         return false;
                     break;
             // recieved sign for exponent:
-            case 7: if (isdigit(s[i]))
-                        state = 8;
+            case 6: if (isdigit(s[i]))
+                        state = 7;
                     else
                         return false;
                     break;
             // recieved >= one digit of exponent:
-            case 8: if (isdigit(s[i]))
+            case 7: if (isdigit(s[i]))
                         break;
                     else
                         return false;
