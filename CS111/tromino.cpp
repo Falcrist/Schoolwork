@@ -24,10 +24,10 @@ int trom(int **a, int d, int x, int y, int i)
 	int hole_x = x;
 	int hole_y = y;
 	for (int k = y; k <= y+d-1; ++k)
-        for (int j = x; j <= x+d-1; ++j)
-            if (a[j][k] != -1){
-                hole_x = j;
-                hole_y = k;
+            for (int j = x; j <= x+d-1; ++j)
+                if (a[j][k] != -1){
+                    hole_x = j;
+                    hole_y = k;
             }
 
     /* place tromino pointed away from the filled element (and increment i) */
