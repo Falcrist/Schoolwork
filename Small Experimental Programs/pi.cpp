@@ -7,7 +7,7 @@ int main(void) {
     int neg = 1;
     double denom = 2;
     int i = 0;
-    while (i++ < 70000){
+    while (i++ < 68400){
         pi += (4 * neg) / (denom * (denom+1) * (denom+2));
         neg = -neg;
         denom+=2;

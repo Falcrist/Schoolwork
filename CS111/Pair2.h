@@ -153,17 +153,17 @@ template <typename S, typename T>
 string Pair<S,T>::toString()
    {
       stringstream ss;
-      ss<<"(";
+      ss<<'(';
       if (f==NULL)
          ss<<"NULL";
       else
          ss<<(*f);
-      ss<<",";
+      ss<<", ";
       if (s==NULL)
          ss<<"NULL";
       else
          ss<<(*s);
-      ss<<")";
+      ss<<')';
       return ss.str();
    }
 
