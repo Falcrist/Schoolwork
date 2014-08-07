@@ -1,17 +1,17 @@
 template <typename T>
 class Stack
 {
-public:
-	Stack();
-	~Stack();
+	public:
+		Stack();
+		~Stack();
 
-	void push(const T&);
-	bool pop(T&);
+		void push(const T&);
+		bool pop(T&);
 
-	bool isEmpty();
+		bool isEmpty();
 
-private:
-	StackNode<T> *tos; // Top Of Stack
+	private:
+		StackNode<T> *tos; // Top Of Stack
 };
 
 template <typename T>
@@ -31,17 +31,16 @@ Stack<T>::~Stack()
 template <typename T>
 void Stack<T>::push(const T &x)
 {
-	//cout << "pushing" << endl;
 	StackNode<T> *tmp = new StackNode<T>();
 	(*tmp).data = x;
 	(*tmp).next = tos;
 	tos = tmp;
 }
 
+// Pop function manipulates the input variable, and returns TRUE if successful
 template <typename T>
 bool Stack<T>::pop(T &x)
 {
-	//cout << "popping" << endl;
 	if (tos != NULL) {
 		StackNode<T> *tmp = tos;
 		tos = (*tos).next;

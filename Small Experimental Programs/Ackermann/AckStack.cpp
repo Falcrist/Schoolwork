@@ -4,42 +4,38 @@
 #include "Stack.h"
 using namespace std;
 
-int ack(int m, int n) {
+int ack(int m, int n)
+{
     Pair<int,int> top(m,n);
     Stack< Pair<int,int> > s;
     s.push(top);
-    int i = 0;
 
     while (s.pop(top)) {
         if (*top.getFirst() == 0) {
-			//cout << "Case 1: " << *top.getFirst() << ',' << *top.getSecond() << endl;
+			// Case 1: ack(0,x) = x+1
             int answer = *top.getSecond() + 1;
-            while (*top.getSecond() != -1)
+            while (*top.getSecond() != -1) // -1 used as a flag for unknown input (from case 3)
                 if (!s.pop(top))
-                    return answer;
-            top.setSecond(answer);
+                    return answer; // successful completion happens here
+            top.setSecond(answer); // flagged input filled in.
 			s.push(top);
         }
         else if (*top.getSecond() == 0) {
-        	//cout << "Case 2: " << *top.getFirst() << ',' << *top.getSecond() << endl;
+        	// Case 2: ack(x,0) = ack(x-1, 1)
             Pair<int,int> x(*top.getFirst()-1, 1);
             s.push(x);
         }
         else {
-        	//cout << "Case 3: " << *top.getFirst() << ',' << *top.getSecond() << endl;
-            Pair<int,int> x(*top.getFirst()-1, -1);
+        	// Case 3: ack(x,y) = ack(x-1, ack(x,y-1))
+            Pair<int,int> x(*top.getFirst()-1, -1); // -1 flag used used to denote unknown input
             s.push(x);
             x.setFirst(*top.getFirst());
             x.setSecond(*top.getSecond() - 1);
             s.push(x);
 		}
-		if (++i == 1000000) {
-			cout << *top.getFirst() << ',' << *top.getSecond() << endl;
-			i = 0;
-		}
 
     }
-    return 0; // MOTHER F@#$ING FAILURE, SON! Process never gets here.
+    return 0; // Impossible to get here as far as I know.
 }
 
 int main(void)
